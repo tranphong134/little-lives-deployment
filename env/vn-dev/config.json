@@ -1,0 +1,18 @@
+{
+    "provider": "aws",
+    "k8s_namespace": "tranphong134-dev",
+    "k8s_service_type": "LoadBalancer",
+    "service_domain": ".dev.tranphong134.vn",
+    "domain": "dev.tranphong134.vn",
+    "deployment_region": "vn",
+    "deployment_name": "vn-dev",
+    "deployment_env": "develop",
+    "ssl_cert": "xxxxxxxxxxx",
+
+    "backend_image_repository": "bitnami/nginx",
+    "backend_image_tag": "1.23.0-debian-11-r0",
+    "backend_image_pull_secrets": "ecr-registry",
+    "backend_appVersion": "0.0.1",
+    "backend_min_replica_count": 1,
+    "backend_max_replica_count": 4
+}

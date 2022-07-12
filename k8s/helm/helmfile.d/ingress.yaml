@@ -1,0 +1,56 @@
+environments:
+  vn-dev:
+    values:
+      - ../../../env/vn-dev/.env.yaml
+  vn-stag:
+    values:
+      - ../../../env/vn-stag/.env.yaml
+      
+repositories:
+
+  - name: ingress-nginx
+    url: https://kubernetes.github.io/ingress-nginx
+
+releases:
+
+  # INGRESSES
+  # -------------------------------------------------------------------------------
+  # This provides an ingress endpoint for inbound traffic
+  
+  
+  - name: ingress-nginx
+    namespace: ingress-nginx
+    createNamespace: true
+    chart: ingress-nginx/ingress-nginx
+    version: 4.1.0
+    values:
+      - controller:
+          replicaCount: 2
+          service:
+            externalTrafficPolicy: "Local"
+            targetPorts:
+              http: http
+              https: http
+            ipFamilyPolicy: PreferDualStack
+            ipFamilies:
+              - IPv6
+            annotations:
+              nginx.ingress.kubernetes.io/configuration-snippet: |
+                more_set_headers "Access-Control-Allow-Origin: $http_origin";
+              nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+              nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE, PATCH"
+              nginx.ingress.kubernetes.io/enable-cors: "true"
+              service.beta.kubernetes.io/aws-load-balancer-type: external
+              service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+              service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+              service.beta.kubernetes.io/aws-load-balancer-ip-address-type: dualstack
+              service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ .Values.ssl_cert }}
+              service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
+              nginx.ingress.kubernetes.io/client-body-buffer-size: 100M
+              nginx.ingress.kubernetes.io/proxy-body-size: 100m
+              nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "100m"
+              nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+              nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+              nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+              nginx.ingress.kubernetes.io/send-timeout: "3600"
+              

@@ -1,0 +1,40 @@
+nameOverride: ""
+fullnameOverride: ""
+replicaCount: 1
+imagePullSecrets: []
+
+
+image:
+  repository: bitnami/nginx
+  pullPolicy: Always
+  tag: latest
+
+ingress:
+  annotations: {}
+  hosts: {
+  }
+  tls: []
+  
+resources: {}
+
+sqlProxy:
+  resources:
+      # The proxy's memory use scales linearly with the number of active
+      # connections. Fewer open connections will use less memory. Adjust
+      # this value based on your application's requirements.
+      # The proxy's CPU use scales linearly with the amount of IO between
+      # the database and the application. Adjust this value based on your
+      # application's requirements.
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+      
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+  # targetMemoryUtilizationPercentage: 80

@@ -1,0 +1,51 @@
+environments:
+  vn-dev:
+    values:
+      - ../../../env/vn-dev/.env.yaml
+  vn-stag:
+    values:
+      - ../../../env/vn-stag/.env.yaml
+
+releases:
+  
+  - name: backend
+    namespace: {{ .Values.k8s_namespace }}
+    chart: ../charts/backend
+    values:
+      - provider: {{ .Values.provider }}
+        domain: "https://{{ .Values.domain }}/"
+        deployment_name: {{ .Values.deployment_name }}
+        deployment_env: {{ .Values.deployment_env }}
+        deployment_region: {{ .Values.deployment_region }}
+        serviceType: {{ .Values.k8s_service_type }}
+        image:
+          repository: "{{ .Values.backend_image_repository }}"
+          tag: "{{ .Values.backend_image_tag }}"
+        imagePullSecrets:
+          - name: {{ .Values.backend_image_pull_secrets }}
+        appVersion: {{ .Values.backend_appVersion }}
+        
+        ingress:
+          annotations:
+            nginx.ingress.kubernetes.io/client-body-buffer-size: "100m"
+            nginx.ingress.kubernetes.io/proxy-body-size: "100m"
+            nginx.ingress.kubernetes.io/proxy-max-temp-file-size: "100m"
+            nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+            nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+            nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+            nginx.ingress.kubernetes.io/send-timeout: "3600"
+          hosts:
+            - host: api{{ .Values.service_domain }}
+              paths:
+                - "/"
+        # resources:
+        #   requests:
+        #     cpu: 400m
+        #     memory: 2000m
+        #   limits:
+        #     cpu: 500m
+        #     memory: 2200m
+        # autoscaling:
+        #   enabled: true
+        #   minReplicas: {{ .Values.backend_min_replica_count }}
+        #   maxReplicas: {{ .Values.backend_max_replica_count }}
